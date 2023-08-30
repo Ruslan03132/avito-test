@@ -1,33 +1,18 @@
 import { useCallback, useEffect } from "react";
 import { Game } from "./Game";
+import { Col, Row } from "antd";
 
-export function GamesLayout() {
+export function GamesLayout({ data }) {
+  console.log(data);
 
-    
-    const getDataGames = useCallback(async () => {
-        const url =
-            "https://free-to-play-games-database.p.rapidapi.com/api/games";
-        const options = {
-            method: "GET",
-            headers: {
-                "X-RapidAPI-Key":
-                    "bd3fe325d8mshf112ef355bf466dp1df81cjsnfb70b0c0201e",
-                "X-RapidAPI-Host": "free-to-play-games-database.p.rapidapi.com",
-            },
-        };
 
-        try {
-            const gamesData = await fetch(url, options);
-            const gamesJson = await gamesData.text();
-            console.log(gamesJson);
-        } catch (error) {
-            console.error(error);
-        }
-    }, []);
+ 
+  return (
+    <Row gutter = {[16, 16]}>
+      {data.map((value) => {
 
-    useEffect(() => {
-        getDataGames();
-    }, []);
-
-    return <div>{}</div>
+        return <Col span ={8}><Game book={value} key={value.id}></Game></Col>
+      })}
+    </Row>
+  );
 }
