@@ -1,0 +1,14 @@
+.root {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    width: 750px;
+}
+
+@media screen and (max-width: 800px) {
+    .root {
+        width: auto;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+}

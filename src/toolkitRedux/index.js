@@ -1,10 +1,12 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import toolkitSlice from "./toolkitSlice";
+import toolkitSliceGamesList from "./toolkitSliceGamesList";
+import toolkitSliceGame from "./toolkitSliceGame";
 
 const rootReducer = combineReducers({
-    toolkit: toolkitSlice
-})
+    sliceGamesList: toolkitSliceGamesList,
+    sliceGame: toolkitSliceGame,
+});
 
 export const store = configureStore({
     reducer: rootReducer,
-})
+});

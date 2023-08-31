@@ -1,0 +1,38 @@
+.root {
+}
+
+.title {
+    color: green;
+    margin: 20px 0px 20px 0px;
+}
+.image {
+    width: 50%;
+    margin-top: 20px;
+}
+.list {
+    margin: 20px 0px 20px 0px;
+    padding: 0;
+    list-style: none;
+}
+.listItem {
+}
+.listContainer {
+    display: flex;
+}
+.listItemKey {
+    width: 200px;
+    flex-shrink: 0;
+}
+.listItemValue {
+}
+
+.wrapper {
+    flex-direction: column;
+}
+
+@media screen and (max-width: 800px) {
+    .listItemKey {
+        width: 100px;
+        margin-right: 20px;
+    }
+}
