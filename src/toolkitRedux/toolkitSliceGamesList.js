@@ -8,6 +8,7 @@ const initialState = {
     isload: false,
     error: "",
 };
+
 const toolkitSliceGamesList = createSlice({
     name: "sliceGamesList",
     initialState,

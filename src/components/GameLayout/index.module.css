@@ -5,24 +5,48 @@
     color: green;
     margin: 20px 0px 20px 0px;
 }
-.image {
-    width: 50%;
+
+.carousel {
     margin-top: 20px;
+    border: 5px solid blue;
+    background-color: blue;
 }
+
+.image {
+    width: 300px;
+    margin-left: 20px;
+    border: 5px solid blue;
+    display: inline-block;
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.imageCarousel {
+    width: 100%;
+    object-fit: cover;
+}
+
 .list {
     margin: 20px 0px 20px 0px;
     padding: 0;
     list-style: none;
 }
+
 .listItem {
 }
+
 .listContainer {
     display: flex;
 }
+
 .listItemKey {
-    width: 200px;
+    width: 150px;
     flex-shrink: 0;
 }
+
 .listItemValue {
 }
 
@@ -34,5 +58,12 @@
     .listItemKey {
         width: 100px;
         margin-right: 20px;
+    }
+    .content {
+        flex-direction: column;
+    }
+    .image {
+        margin-left: 0;
+        margin-top: 20px;
     }
 }

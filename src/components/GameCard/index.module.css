@@ -1,0 +1,35 @@
+.root {
+    display: block;
+    height: 100%;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 5px solid rgb(33, 222, 255);
+    border-radius: 1%;
+    padding: 10px;
+}
+
+.list {
+    flex-grow: 1;
+}
+
+.listContainer {
+    display: flex;
+    margin-bottom: 5px;
+    background-color: rgb(241, 241, 241);
+}
+
+.listItemKey {
+    width: 100px;
+}
+
+.listItemValue {
+}
+
+.image {
+    border: 5px solid blue;
+    width: 100%;
+}

@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import styles from "./index.module.css";
-import { Spin } from "antd";
+import { Spin, Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useCallback } from "react";
 import {
@@ -11,6 +11,7 @@ import {
 import GameLayout from "../../GameLayout/GameLayout";
 import { fetchWithTimeout } from "../../../libs/fetchWithTimeout";
 import NotWorkingServicePage from "../NotWorkingServicePage/NotWorkingServicePage";
+import { Link } from "react-router-dom";
 
 function GamePage() {
     const id = useParams().id;
@@ -58,15 +59,29 @@ function GamePage() {
     if (gameError) {
         return <NotWorkingServicePage></NotWorkingServicePage>;
     }
+
     if (isloadGame || dataGame.length === 0) {
         return (
-            <Spin
-                size='large'
-                spinning={isloadGame || dataGame.length === 0}
-            ></Spin>
+            <div className={styles.wrapperSpin}>
+                <Spin
+                    size='large'
+                    spinning={isloadGame || dataGame.length === 0}
+                    className={styles.spin}
+                ></Spin>
+            </div>
         );
     }
-    return <GameLayout dataGame={dataGame}></GameLayout>;
+
+    return (
+        <>
+            <Link to='/'>
+                <Button type='primary' className={styles.back}>
+                    Назад
+                </Button>
+            </Link>
+            <GameLayout dataGame={dataGame}></GameLayout>
+        </>
+    );
 }
 
 export default GamePage;

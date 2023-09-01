@@ -39,6 +39,7 @@ function GamesPage() {
     const getAsyncGames = useCallback(() => {
         return async (dispatch) => {
             let url = "";
+
             if (sortedBy || platform || genre) {
                 url = `https://free-to-play-games-database.p.rapidapi.com/api/games?${
                     platform ? "platform=" + platform + "&" : ""
@@ -59,8 +60,10 @@ function GamesPage() {
                         "free-to-play-games-database.p.rapidapi.com",
                 },
             };
+
             dispatch(setLoad(true));
             dispatch(setError(""));
+
             try {
                 const response = await fetchWithTimeout(url, options);
                 const jsonData = await response.json();
@@ -83,92 +86,100 @@ function GamesPage() {
     if (error) {
         return <NotWorkingServicePage></NotWorkingServicePage>;
     }
-    if (isload || data.length === 0) {
-        return (
-            <Spin size='large' spinning={isload || data.length === 0}></Spin>
-        );
-    }
+
     return (
-        <>
-            <Select
-                showSearch
-                placeholder='Select a sort'
-                optionFilterProp='children'
-                onChange={onChangeSort}
-                filterOption={(input, option) =>
-                    (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                }
-                value={sortedBy}
-                options={[
-                    {
-                        value: "release-date",
-                        label: "По дате релиза",
-                    },
-                    {
-                        value: "popularity",
-                        label: "По популярности",
-                    },
-                    {
-                        value: "alphabetical",
-                        label: "По алфавиту",
-                    },
-                    {
-                        value: "relevance",
-                        label: "По актуальности",
-                    },
-                ]}
-            />
+        <Spin
+            tip='Loading'
+            className={styles.spin}
+            size='large'
+            spinning={isload || data.length === 0}
+        >
+            <div className={styles.root}>
+                <div className={styles.selectGroup}>
+                    <Select
+                        className={styles.select}
+                        showSearch
+                        placeholder='Select a sort'
+                        optionFilterProp='children'
+                        onChange={onChangeSort}
+                        filterOption={(input, option) =>
+                            (option?.label ?? "")
+                                .toLowerCase()
+                                .includes(input.toLowerCase())
+                        }
+                        value={sortedBy}
+                        options={[
+                            {
+                                value: "release-date",
+                                label: "По дате релиза",
+                            },
+                            {
+                                value: "popularity",
+                                label: "По популярности",
+                            },
+                            {
+                                value: "alphabetical",
+                                label: "По алфавиту",
+                            },
+                            {
+                                value: "relevance",
+                                label: "По актуальности",
+                            },
+                        ]}
+                    />
 
-            <Select
-                showSearch
-                placeholder='Select a platform'
-                optionFilterProp='children'
-                onChange={onChangePlatform}
-                filterOption={(input, option) =>
-                    (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                }
-                value={platform}
-                options={[
-                    {
-                        value: "pc",
-                        label: "ПК",
-                    },
-                    {
-                        value: "browser",
-                        label: "Онлайн игры",
-                    },
-                    {
-                        value: "all",
-                        label: "Все",
-                    },
-                ]}
-            />
+                    <Select
+                        className={styles.select}
+                        showSearch
+                        placeholder='Select a platform'
+                        optionFilterProp='children'
+                        onChange={onChangePlatform}
+                        filterOption={(input, option) =>
+                            (option?.label ?? "")
+                                .toLowerCase()
+                                .includes(input.toLowerCase())
+                        }
+                        value={platform}
+                        options={[
+                            {
+                                value: "pc",
+                                label: "ПК",
+                            },
+                            {
+                                value: "browser",
+                                label: "Онлайн игры",
+                            },
+                            {
+                                value: "all",
+                                label: "Все",
+                            },
+                        ]}
+                    />
 
-            <Select
-                showSearch
-                placeholder='Select a person'
-                optionFilterProp='children'
-                onChange={onChangeGenre}
-                filterOption={(input, option) =>
-                    (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                }
-                value={genre}
-                options={GENRES.map((item) => {
-                    return {
-                        label: item,
-                        value: item,
-                    };
-                })}
-            />
+                    <Select
+                        className={styles.select}
+                        showSearch
+                        placeholder='Select a person'
+                        optionFilterProp='children'
+                        onChange={onChangeGenre}
+                        filterOption={(input, option) =>
+                            (option?.label ?? "")
+                                .toLowerCase()
+                                .includes(input.toLowerCase())
+                        }
+                        value={genre}
+                        options={GENRES.map((item) => {
+                            return {
+                                label: item,
+                                value: item,
+                            };
+                        })}
+                    />
+                </div>
 
-            <GamesLayout data={data}></GamesLayout>
-        </>
+                <GamesLayout data={data}></GamesLayout>
+            </div>
+        </Spin>
     );
 }
 
