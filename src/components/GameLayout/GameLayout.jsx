@@ -19,10 +19,6 @@ function GameLayout({ dataGame }) {
         .toLocal()
         .toFormat("dd.LL.yyyy");
 
-    const onChange = (currentSlide) => {
-        console.log(currentSlide);
-    };
-
     return (
         <div className={styles.root}>
             <Wrapper className={styles.wrapper}>
@@ -61,7 +57,7 @@ function GameLayout({ dataGame }) {
                     <img className={styles.image} src={thumbnail}></img>
                 </div>
 
-                <Carousel afterChange={onChange} className={styles.carousel}>
+                <Carousel className={styles.carousel}>
                     {screenshots.map((item) => {
                         return (
                             <img

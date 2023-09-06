@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = { dataGame: [], isloadGame: false, gameError: "" };
+const initialState = { dataGame: null, isloadGame: false, gameError: ""};
 const toolkitSliceGame = createSlice({
     name: "sliceGame",
     initialState,

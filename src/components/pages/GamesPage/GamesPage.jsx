@@ -1,7 +1,7 @@
 import styles from "./index.module.css";
 import { GamesLayout } from "../../GamesLayout/GamesLayout";
 import { useDispatch, useSelector } from "react-redux";
-import { GENRES } from "../../../consts";
+import { GENRES } from "../../../consts/genres";
 import { Select, Spin } from "antd";
 import { useEffect, useCallback } from "react";
 import { fetchWithTimeout } from "../../../libs/fetchWithTimeout";
@@ -38,18 +38,13 @@ function GamesPage() {
 
     const getAsyncGames = useCallback(() => {
         return async (dispatch) => {
-            let url = "";
-
-            if (sortedBy || platform || genre) {
-                url = `https://free-to-play-games-database.p.rapidapi.com/api/games?${
-                    platform ? "platform=" + platform + "&" : ""
-                }${genre ? "category=" + genre + "&" : ""}${
-                    sortedBy ? "sort-by=" + sortedBy : ""
-                }`;
-            } else {
-                url =
-                    "https://free-to-play-games-database.p.rapidapi.com/api/games";
-            }
+            const params = new URLSearchParams(
+                [
+                    ["platform", platform],
+                    ["category", genre],
+                    ["sort-by", sortedBy],
+                ].filter((item) => item[1] !== null)
+            ).toString();
 
             const options = {
                 method: "GET",
@@ -60,6 +55,7 @@ function GamesPage() {
                         "free-to-play-games-database.p.rapidapi.com",
                 },
             };
+            const url = `https://free-to-play-games-database.p.rapidapi.com/api/games?${params}`;
 
             dispatch(setLoad(true));
             dispatch(setError(""));

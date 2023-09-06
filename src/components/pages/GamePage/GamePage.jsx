@@ -12,6 +12,7 @@ import GameLayout from "../../GameLayout/GameLayout";
 import { fetchWithTimeout } from "../../../libs/fetchWithTimeout";
 import NotWorkingServicePage from "../NotWorkingServicePage/NotWorkingServicePage";
 import { Link } from "react-router-dom";
+import { getItemFromCache, setItemToCache } from "../../../libs/cache";
 
 function GamePage() {
     const id = useParams().id;
@@ -22,7 +23,7 @@ function GamePage() {
     const dataGame = useSelector((state) => state.sliceGame.dataGame);
 
     const getDataGame = useCallback(() => {
-        return async (dispatch) => {
+        return async () => {
             const url = `https://free-to-play-games-database.p.rapidapi.com/api/game?id=${id}`;
             const options = {
                 method: "GET",
@@ -36,11 +37,20 @@ function GamePage() {
 
             dispatch(setLoadGame(true));
             dispatch(setGameError(""));
+
+            const item = getItemFromCache(id);
+
+            if (item) {
+                dispatch(setDataGame(item));
+                dispatch(setLoadGame(false));
+                return;
+            }
             try {
                 dispatch(setLoadGame(true));
                 const response = await fetchWithTimeout(url, options);
                 const jsonData = await response.json();
                 dispatch(setDataGame(jsonData));
+                setItemToCache(id, jsonData);
             } catch (error) {
                 if (error.name === "AbortError") {
                     dispatch(setGameError("AbortError"));
@@ -60,12 +70,12 @@ function GamePage() {
         return <NotWorkingServicePage></NotWorkingServicePage>;
     }
 
-    if (isloadGame || dataGame.length === 0) {
+    if (isloadGame || !dataGame) {
         return (
             <div className={styles.wrapperSpin}>
                 <Spin
                     size='large'
-                    spinning={isloadGame || dataGame.length === 0}
+                    spinning={isloadGame || !dataGame}
                     className={styles.spin}
                 ></Spin>
             </div>
