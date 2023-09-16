@@ -73,25 +73,23 @@ function GamePage() {
     if (isloadGame || !dataGame) {
         return (
             <div className={styles.wrapperSpin}>
-                <Spin
-                    size='large'
-                    spinning={isloadGame || !dataGame}
-                    className={styles.spin}
-                ></Spin>
+                <Spin size='large' spinning className={styles.spin}></Spin>
             </div>
         );
     }
 
-    return (
-        <>
-            <Link to='/'>
-                <Button type='primary' className={styles.back}>
-                    Назад
-                </Button>
-            </Link>
-            <GameLayout dataGame={dataGame}></GameLayout>
-        </>
-    );
+    if (!isloadGame && dataGame) {
+        return (
+            <>
+                <Link to='/'>
+                    <Button type='primary' className={styles.back}>
+                        Назад
+                    </Button>
+                </Link>
+                <GameLayout dataGame={dataGame}></GameLayout>
+            </>
+        );
+    }
 }
 
 export default GamePage;

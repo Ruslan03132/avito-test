@@ -83,13 +83,14 @@ function GamesPage() {
         return <NotWorkingServicePage></NotWorkingServicePage>;
     }
 
-    return (
-        <Spin
-            tip='Loading'
-            className={styles.spin}
-            size='large'
-            spinning={isload || data.length === 0}
-        >
+    if (data.length === 0 || isload) {
+        return (
+            <Spin tip='Loading' className={styles.spin} size='large' spinning />
+        );
+    }
+
+    if (data && !isload) {
+        return (
             <div className={styles.root}>
                 <div className={styles.selectGroup}>
                     <Select
@@ -175,8 +176,8 @@ function GamesPage() {
 
                 <GamesLayout data={data}></GamesLayout>
             </div>
-        </Spin>
-    );
+        );
+    }
 }
 
 export default GamesPage;
