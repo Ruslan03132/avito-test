@@ -22,6 +22,9 @@ function GamePage() {
     const gameError = useSelector((state) => state.sliceGame.gameError);
     const dataGame = useSelector((state) => state.sliceGame.dataGame);
 
+    let countRequests = 0;
+    const maxRequests = 3;
+
     const getDataGame = useCallback(() => {
         return async () => {
             const url = `https://free-to-play-games-database.p.rapidapi.com/api/game?id=${id}`;
@@ -45,19 +48,26 @@ function GamePage() {
                 dispatch(setLoadGame(false));
                 return;
             }
-            try {
-                dispatch(setLoadGame(true));
-                const response = await fetchWithTimeout(url, options);
-                const jsonData = await response.json();
-                dispatch(setDataGame(jsonData));
-                setItemToCache(id, jsonData);
-            } catch (error) {
-                if (error.name === "AbortError") {
-                    dispatch(setGameError("AbortError"));
+            while (countRequests < maxRequests) {
+                try {
+                    console.log(countRequests);
+                    dispatch(setLoadGame(true));
+                    const response = await fetchWithTimeout(url, options);
+                    const jsonData = await response.json();
+                    dispatch(setDataGame(jsonData));
+                    setItemToCache(id, jsonData);
+                    countRequests = 0;
+                    dispatch(setGameError(""));
+                    break;
+                } catch (error) {
+                    if (error.name === "AbortError") {
+                        dispatch(setGameError("AbortError"));
+                    }
+                    dispatch(setGameError(error.message));
+                    countRequests++;
+                } finally {
+                    dispatch(setLoadGame(false));
                 }
-                dispatch(setGameError(error.message));
-            } finally {
-                dispatch(setLoadGame(false));
             }
         };
     }, []);
@@ -67,7 +77,9 @@ function GamePage() {
     }, []);
 
     if (gameError) {
-        return <NotWorkingServicePage></NotWorkingServicePage>;
+        return (
+            <NotWorkingServicePage error={gameError}></NotWorkingServicePage>
+        );
     }
 
     if (isloadGame || !dataGame) {

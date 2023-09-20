@@ -23,6 +23,9 @@ function GamesPage() {
     const isload = useSelector((state) => state.sliceGamesList.isload);
     const error = useSelector((state) => state.sliceGamesList.error);
 
+    let countRequests = 0;
+    const maxRequests = 3;
+
     const dispatch = useDispatch();
 
     const onChangeSort = (value) => {
@@ -59,18 +62,23 @@ function GamesPage() {
 
             dispatch(setLoad(true));
             dispatch(setError(""));
-
-            try {
-                const response = await fetchWithTimeout(url, options);
-                const jsonData = await response.json();
-                dispatch(getData(jsonData));
-            } catch (error) {
-                if (error.name === "AbortError") {
-                    dispatch(setError("AbortError"));
+            while (countRequests < maxRequests) {
+                try {
+                    const response = await fetchWithTimeout(url, options);
+                    const jsonData = await response.json();
+                    dispatch(getData(jsonData));
+                    countRequests = 0;
+                    dispatch(setError(""));
+                    break;
+                } catch (error) {
+                    if (error.name === "AbortError") {
+                        dispatch(setError("AbortError"));
+                    }
+                    dispatch(setError(error.message));
+                    countRequests++;
+                } finally {
+                    dispatch(setLoad(false));
                 }
-                dispatch(setError(error.message));
-            } finally {
-                dispatch(setLoad(false));
             }
         };
     }, [sortedBy, platform, genre]);
@@ -80,7 +88,7 @@ function GamesPage() {
     }, [sortedBy, platform, genre]);
 
     if (error) {
-        return <NotWorkingServicePage></NotWorkingServicePage>;
+        return <NotWorkingServicePage error={error}></NotWorkingServicePage>;
     }
 
     if (data.length === 0 || isload) {
