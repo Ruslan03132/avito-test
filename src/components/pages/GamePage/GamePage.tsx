@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import styles from "./index.module.css";
 import { Spin, Button } from "antd";
 import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../../toolkitRedux/hooks";
 import { useEffect, useCallback } from "react";
 import {
     setDataGame,
@@ -17,10 +18,10 @@ import { getItemFromCache, setItemToCache } from "../../../libs/cache";
 function GamePage() {
     const id = useParams().id;
 
-    const dispatch = useDispatch();
-    const isloadGame = useSelector((state) => state.sliceGame.isloadGame);
-    const gameError = useSelector((state) => state.sliceGame.gameError);
-    const dataGame = useSelector((state) => state.sliceGame.dataGame);
+    const dispatch = useAppDispatch();
+    const isloadGame = useAppSelector((state) => state.sliceGame.isLoadGame);
+    const gameError = useAppSelector((state) => state.sliceGame.gameError);
+    const dataGame = useAppSelector((state) => state.sliceGame.dataGame);
 
     let countRequests = 0;
     const maxRequests = 3;
@@ -41,7 +42,7 @@ function GamePage() {
             dispatch(setLoadGame(true));
             dispatch(setGameError(""));
 
-            const item = getItemFromCache(id);
+            const item = getItemFromCache(Number(id));
 
             if (item) {
                 dispatch(setDataGame(item));
@@ -55,16 +56,18 @@ function GamePage() {
                     const response = await fetchWithTimeout(url, options);
                     const jsonData = await response.json();
                     dispatch(setDataGame(jsonData));
-                    setItemToCache(id, jsonData);
+                    setItemToCache(Number(id), jsonData);
                     countRequests = 0;
                     dispatch(setGameError(""));
                     break;
                 } catch (error) {
-                    if (error.name === "AbortError") {
-                        dispatch(setGameError("AbortError"));
+                    if (error instanceof Error) {
+                        if (error.name === "AbortError") {
+                            dispatch(setGameError("AbortError"));
+                        }
+                        dispatch(setGameError(error.message));
+                        countRequests++;
                     }
-                    dispatch(setGameError(error.message));
-                    countRequests++;
                 } finally {
                     dispatch(setLoadGame(false));
                 }
@@ -85,7 +88,7 @@ function GamePage() {
     if (isloadGame || !dataGame) {
         return (
             <div className={styles.wrapperSpin}>
-                <Spin size='large' spinning className={styles.spin}></Spin>
+                <Spin size="large" spinning className={styles.spin}></Spin>
             </div>
         );
     }
@@ -93,12 +96,12 @@ function GamePage() {
     if (!isloadGame && dataGame) {
         return (
             <>
-                <Link to='/'>
-                    <Button type='primary' className={styles.back}>
+                <Link to="/">
+                    <Button type="primary" className={styles.back}>
                         Назад
                     </Button>
                 </Link>
-                <GameLayout dataGame={dataGame}></GameLayout>
+                <GameLayout {...dataGame}></GameLayout>
             </>
         );
     }

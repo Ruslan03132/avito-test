@@ -2,20 +2,19 @@ import { DateTime } from "luxon";
 import styles from "./index.module.css";
 import Wrapper from "../Wrapper/Wrapper";
 import { Carousel } from "antd";
+import { dataGameProps } from "../../toolkitRedux/toolkitSliceGame";
 
-function GameLayout({ dataGame }) {
-    const {
-        title,
-        thumbnail,
-        publisher,
-        developer,
-        release_date,
-        minimum_system_requirements,
-        genre,
-        screenshots,
-    } = dataGame;
-
-    const release_date_time = DateTime.fromSQL(release_date)
+function GameLayout({
+    title,
+    thumbnail,
+    publisher,
+    developer,
+    release_date,
+    minimumSystemRequirements,
+    genre,
+    screenshots,
+}: dataGameProps) {
+    const releaseDateTime = DateTime.fromSQL(release_date)
         .toLocal()
         .toFormat("dd.LL.yyyy");
 
@@ -30,7 +29,7 @@ function GameLayout({ dataGame }) {
                                 {"Дата релиза:"}
                             </div>
                             <div className={styles.listItemValue}>
-                                {release_date_time}
+                                {releaseDateTime}
                             </div>
                         </div>
                         <div className={styles.listContainer}>
@@ -54,11 +53,12 @@ function GameLayout({ dataGame }) {
                             <div className={styles.listItemValue}>{genre}</div>
                         </div>
                     </div>
+                    {/* alt */}
                     <img className={styles.image} src={thumbnail}></img>
                 </div>
 
                 <Carousel className={styles.carousel}>
-                    {screenshots.map((item) => {
+                    {screenshots.map((item: any) => {
                         return (
                             <img
                                 key={item.id}
@@ -69,10 +69,10 @@ function GameLayout({ dataGame }) {
                     })}
                 </Carousel>
 
-                {minimum_system_requirements && (
+                {minimumSystemRequirements && (
                     <ul className={styles.list}>
-                        {Object.entries(minimum_system_requirements).map(
-                            (item) => {
+                        {Object.entries(minimumSystemRequirements).map(
+                            (item: [string, any]) => {
                                 return (
                                     <li
                                         className={styles.listItem}

@@ -1,6 +1,6 @@
 import styles from "./index.module.css";
 
-function NotWorkingServicePage({ error }) {
+function NotWorkingServicePage({ error }: any ) {
     if (error) {
         return (
             <div>

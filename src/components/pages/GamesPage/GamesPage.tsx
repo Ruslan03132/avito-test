@@ -1,12 +1,14 @@
 import styles from "./index.module.css";
 import { GamesLayout } from "../../GamesLayout/GamesLayout";
 import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../../../toolkitRedux/hooks";
+import type { RootState, AppDispatch } from "../../../index";
 import { GENRES } from "../../../consts/genres";
 import { Select, Spin } from "antd";
 import { useEffect, useCallback } from "react";
 import { fetchWithTimeout } from "../../../libs/fetchWithTimeout";
 import {
-    getData,
+    setData,
     addSort,
     setPlatform,
     setGenre,
@@ -16,31 +18,31 @@ import {
 import NotWorkingServicePage from "../NotWorkingServicePage/NotWorkingServicePage";
 
 function GamesPage() {
-    const data = useSelector((state) => state.sliceGamesList.gamesList);
-    const sortedBy = useSelector((state) => state.sliceGamesList.sortedBy);
-    const platform = useSelector((state) => state.sliceGamesList.platform);
-    const genre = useSelector((state) => state.sliceGamesList.genre);
-    const isload = useSelector((state) => state.sliceGamesList.isload);
-    const error = useSelector((state) => state.sliceGamesList.error);
+    const data = useAppSelector((state) => state.sliceGamesList.gamesList);
+    const sortedBy = useAppSelector((state) => state.sliceGamesList.sortedBy);
+    const platform = useAppSelector((state) => state.sliceGamesList.platform);
+    const genre = useAppSelector((state) => state.sliceGamesList.genre);
+    const isload = useAppSelector((state) => state.sliceGamesList.isload);
+    const error = useAppSelector((state) => state.sliceGamesList.error);
 
     let countRequests = 0;
     const maxRequests = 3;
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
-    const onChangeSort = (value) => {
+    const onChangeSort = (value: string) => {
         dispatch(addSort(value));
     };
-    const onChangePlatform = (value) => {
+    const onChangePlatform = (value: string) => {
         dispatch(setPlatform(value));
     };
 
-    const onChangeGenre = (value) => {
+    const onChangeGenre = (value: string) => {
         dispatch(setGenre(value));
     };
 
     const getAsyncGames = useCallback(() => {
-        return async (dispatch) => {
+        return async (dispatch: AppDispatch) => {
             const params = new URLSearchParams(
                 [
                     ["platform", platform],
@@ -66,16 +68,18 @@ function GamesPage() {
                 try {
                     const response = await fetchWithTimeout(url, options);
                     const jsonData = await response.json();
-                    dispatch(getData(jsonData));
+                    dispatch(setData(jsonData));
                     countRequests = 0;
                     dispatch(setError(""));
                     break;
                 } catch (error) {
-                    if (error.name === "AbortError") {
-                        dispatch(setError("AbortError"));
+                    if (error instanceof Error){
+                        if (error.name === "AbortError") {
+                            dispatch(setError("AbortError"));
+                        }
+                        dispatch(setError(error.message));
+                        countRequests++;
                     }
-                    dispatch(setError(error.message));
-                    countRequests++;
                 } finally {
                     dispatch(setLoad(false));
                 }
@@ -91,7 +95,7 @@ function GamesPage() {
         return <NotWorkingServicePage error={error}></NotWorkingServicePage>;
     }
 
-    if (data.length === 0 || isload) {
+    if (data === null || data.length === 0 || isload) {
         return (
             <Spin tip='Loading' className={styles.spin} size='large' spinning />
         );
@@ -187,5 +191,6 @@ function GamesPage() {
         );
     }
 }
+
 
 export default GamesPage;

@@ -8,7 +8,7 @@ function getCache() {
     return JSON.parse(cacheGames);
 }
 
-function getItemFromCache(id) {
+function getItemFromCache(id: number) {
     const cache = getCache();
     if (cache) {
         const currentItem = cache[id];
@@ -21,7 +21,7 @@ function getItemFromCache(id) {
     }
 }
 
-function setItemToCache(id, jsonData) {
+function setItemToCache(id: number, jsonData: string) {
     const cache = getCache() || {};
     cache[id] = { response: jsonData, time: Date.now() };
     localStorage.setItem(CACHE_GAMES, JSON.stringify(cache));

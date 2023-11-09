@@ -47,5 +47,8 @@
   "main": "index.js",
   "author": "Ruslan Chekushin",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
 }
