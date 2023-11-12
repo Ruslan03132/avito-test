@@ -1,5 +1,5 @@
 import styles from "./index.module.css";
-
-export default function NotFoundPage() {
+import { FC } from "react";
+export const NotFoundPage: FC = () => {
     return <div>Not Found Page</div>;
-}
+};

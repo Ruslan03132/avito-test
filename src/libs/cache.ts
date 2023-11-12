@@ -12,6 +12,7 @@ function getItemFromCache(id: number) {
     const cache = getCache();
     if (cache) {
         const currentItem = cache[id];
+        console.log("id", id);
         if (currentItem) {
             if (Date.now() - currentItem.time > CACHE_GAMES_EXPIRED) {
                 return null;

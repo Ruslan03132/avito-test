@@ -2,16 +2,17 @@ import { Link } from "react-router-dom";
 import styles from "./index.module.css";
 import { DateTime } from "luxon";
 import { IGamesListItem } from "../../toolkitRedux/toolkitSliceGamesList";
+import { FC } from "react";
 
-export function GameCard({
+export const GameCard: FC<IGamesListItem> = ({
     genre,
     id,
     publisher,
-    release_date,
+    releaseDate,
     thumbnail,
     title,
-}: IGamesListItem) {
-    const releaseDateTime = DateTime.fromSQL(release_date)
+}) => {
+    const releaseDateTime = DateTime.fromSQL(releaseDate)
         .toLocal()
         .toFormat("dd.LL.yyyy");
 
@@ -49,4 +50,4 @@ export function GameCard({
             </div>
         </Link>
     );
-}
+};

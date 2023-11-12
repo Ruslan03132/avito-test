@@ -2,12 +2,13 @@ import { GameCard } from "../GameCard/GameCard";
 import { Col, Row } from "antd";
 import styles from "./index.module.css";
 import { IGamesListItem } from "../../toolkitRedux/toolkitSliceGamesList";
+import { FC } from "react";
 
 interface IGamesLayoutProps {
     data: IGamesListItem[];
 }
 
-export function GamesLayout( props : IGamesLayoutProps) {
+export function GamesLayout(props: IGamesLayoutProps) {
     return (
         <Row gutter={[18, 18]} justify="space-between">
             {props.data.map((value: IGamesListItem) => {

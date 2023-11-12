@@ -3,8 +3,8 @@ import styles from "./index.module.css";
 import Wrapper from "../Wrapper/Wrapper";
 import { Carousel } from "antd";
 import { dataGameProps } from "../../toolkitRedux/toolkitSliceGame";
-
-function GameLayout({
+import { FC } from "react";
+const GameLayout: FC<dataGameProps> = ({
     title,
     thumbnail,
     publisher,
@@ -13,7 +13,7 @@ function GameLayout({
     minimumSystemRequirements,
     genre,
     screenshots,
-}: dataGameProps) {
+}) => {
     const releaseDateTime = DateTime.fromSQL(release_date)
         .toLocal()
         .toFormat("dd.LL.yyyy");
@@ -97,6 +97,6 @@ function GameLayout({
             </Wrapper>
         </div>
     );
-}
+};
 
 export default GameLayout;

@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import styles from "./index.module.css";
 import { Spin, Button } from "antd";
-import { useDispatch, useSelector } from "react-redux";
 import { useAppDispatch, useAppSelector } from "../../../toolkitRedux/hooks";
 import { useEffect, useCallback } from "react";
 import {
@@ -14,8 +13,9 @@ import { fetchWithTimeout } from "../../../libs/fetchWithTimeout";
 import NotWorkingServicePage from "../NotWorkingServicePage/NotWorkingServicePage";
 import { Link } from "react-router-dom";
 import { getItemFromCache, setItemToCache } from "../../../libs/cache";
+import { FC } from "react";
 
-function GamePage() {
+const GamePage: FC = () => {
     const id = useParams().id;
 
     const dispatch = useAppDispatch();
@@ -64,8 +64,9 @@ function GamePage() {
                     if (error instanceof Error) {
                         if (error.name === "AbortError") {
                             dispatch(setGameError("AbortError"));
+                        } else {
+                            dispatch(setGameError(error.message));
                         }
-                        dispatch(setGameError(error.message));
                         countRequests++;
                     }
                 } finally {
@@ -105,6 +106,6 @@ function GamePage() {
             </>
         );
     }
-}
+};
 
 export default GamePage;

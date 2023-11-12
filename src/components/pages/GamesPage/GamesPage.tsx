@@ -2,11 +2,17 @@ import styles from "./index.module.css";
 import { GamesLayout } from "../../GamesLayout/GamesLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { useAppDispatch, useAppSelector } from "../../../toolkitRedux/hooks";
-import type { RootState, AppDispatch } from "../../../index";
+import { AppDispatch } from "../../../toolkitRedux";
 import { GENRES } from "../../../consts/genres";
 import { Select, Spin } from "antd";
-import { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useLayoutEffect, FC } from "react";
 import { fetchWithTimeout } from "../../../libs/fetchWithTimeout";
+import {
+    Sort,
+    Platform,
+    gamesState,
+} from "../../../toolkitRedux/toolkitSliceGamesList";
+import { Genre } from "../../../types/genre";
 import {
     setData,
     addSort,
@@ -16,8 +22,10 @@ import {
     setError,
 } from "../../../toolkitRedux/toolkitSliceGamesList";
 import NotWorkingServicePage from "../NotWorkingServicePage/NotWorkingServicePage";
+import { PLATFORM_OPTIONS, SORT_OPTIONS } from "./consts/selectOptions";
+import { string } from "yargs";
 
-function GamesPage() {
+const GamesPage: FC = () => {
     const data = useAppSelector((state) => state.sliceGamesList.gamesList);
     const sortedBy = useAppSelector((state) => state.sliceGamesList.sortedBy);
     const platform = useAppSelector((state) => state.sliceGamesList.platform);
@@ -30,25 +38,33 @@ function GamesPage() {
 
     const dispatch = useAppDispatch();
 
-    const onChangeSort = (value: string) => {
+    const onChangeSort = (value: gamesState["sortedBy"]) => {
         dispatch(addSort(value));
     };
-    const onChangePlatform = (value: string) => {
+    const onChangePlatform = (value: gamesState["platform"]) => {
         dispatch(setPlatform(value));
     };
 
-    const onChangeGenre = (value: string) => {
+    const onChangeGenre = (value: gamesState["genre"]) => {
         dispatch(setGenre(value));
     };
 
     const getAsyncGames = useCallback(() => {
         return async (dispatch: AppDispatch) => {
-            const params = new URLSearchParams(
-                [
-                    ["platform", platform],
-                    ["category", genre],
-                    ["sort-by", sortedBy],
-                ].filter((item) => item[1] !== null)
+            const params: [string, string | null][] = [
+                ["platform", platform],
+                ["category", genre],
+                ["sort-by", sortedBy],
+            ];
+            const filteredParams: string[][] = [];
+            params.forEach((value) => {
+                if (value[1] !== null) {
+                    filteredParams.push([value[0], value[1]]);
+                }
+            });
+
+            const requestParams = new URLSearchParams(
+                filteredParams
             ).toString();
 
             const options = {
@@ -61,7 +77,7 @@ function GamesPage() {
                 },
             };
             const url = `https://free-to-play-games-database.p.rapidapi.com/api/games?${params}`;
-
+            console.log(url);
             dispatch(setLoad(true));
             dispatch(setError(""));
             while (countRequests < maxRequests) {
@@ -73,7 +89,7 @@ function GamesPage() {
                     dispatch(setError(""));
                     break;
                 } catch (error) {
-                    if (error instanceof Error){
+                    if (error instanceof Error) {
                         if (error.name === "AbortError") {
                             dispatch(setError("AbortError"));
                         }
@@ -87,7 +103,7 @@ function GamesPage() {
         };
     }, [sortedBy, platform, genre]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         dispatch(getAsyncGames());
     }, [sortedBy, platform, genre]);
 
@@ -97,7 +113,7 @@ function GamesPage() {
 
     if (data === null || data.length === 0 || isload) {
         return (
-            <Spin tip='Loading' className={styles.spin} size='large' spinning />
+            <Spin tip="Loading" className={styles.spin} size="large" spinning />
         );
     }
 
@@ -108,8 +124,8 @@ function GamesPage() {
                     <Select
                         className={styles.select}
                         showSearch
-                        placeholder='Select a sort'
-                        optionFilterProp='children'
+                        placeholder="Select a sort"
+                        optionFilterProp="children"
                         onChange={onChangeSort}
                         filterOption={(input, option) =>
                             (option?.label ?? "")
@@ -117,31 +133,14 @@ function GamesPage() {
                                 .includes(input.toLowerCase())
                         }
                         value={sortedBy}
-                        options={[
-                            {
-                                value: "release-date",
-                                label: "По дате релиза",
-                            },
-                            {
-                                value: "popularity",
-                                label: "По популярности",
-                            },
-                            {
-                                value: "alphabetical",
-                                label: "По алфавиту",
-                            },
-                            {
-                                value: "relevance",
-                                label: "По актуальности",
-                            },
-                        ]}
+                        options={SORT_OPTIONS}
                     />
 
                     <Select
                         className={styles.select}
                         showSearch
-                        placeholder='Select a platform'
-                        optionFilterProp='children'
+                        placeholder="Select a platform"
+                        optionFilterProp="children"
                         onChange={onChangePlatform}
                         filterOption={(input, option) =>
                             (option?.label ?? "")
@@ -149,27 +148,14 @@ function GamesPage() {
                                 .includes(input.toLowerCase())
                         }
                         value={platform}
-                        options={[
-                            {
-                                value: "pc",
-                                label: "ПК",
-                            },
-                            {
-                                value: "browser",
-                                label: "Онлайн игры",
-                            },
-                            {
-                                value: "all",
-                                label: "Все",
-                            },
-                        ]}
+                        options={PLATFORM_OPTIONS}
                     />
 
                     <Select
                         className={styles.select}
                         showSearch
-                        placeholder='Select a person'
-                        optionFilterProp='children'
+                        placeholder="Select a person"
+                        optionFilterProp="children"
                         onChange={onChangeGenre}
                         filterOption={(input, option) =>
                             (option?.label ?? "")
@@ -190,7 +176,6 @@ function GamesPage() {
             </div>
         );
     }
-}
-
+};
 
 export default GamesPage;
